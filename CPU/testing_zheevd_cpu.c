@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <sysexits.h>
 #define _USE_MATH_DEFINES
+#define __USE_MISC
 #include <math.h>
 #include <complex.h>
 
