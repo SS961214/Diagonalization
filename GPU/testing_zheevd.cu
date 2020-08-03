@@ -1,4 +1,4 @@
-c1;95;0c#include "mersenne_twister.h"
+#include "../Headers/mersenne_twister.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -107,6 +107,16 @@ int main(int argc, char **argv) {
     start = clock();
     clock_gettime(CLOCK_REALTIME, &start_time);
     magma_zheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, w, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
+    
+    magmaDoubleComplex alpha = MAGMA_Z_MAKE(1,0);
+    magmaDoubleComplex beta  = MAGMA_Z_MAKE(0,0);
+    magma_zhemm(MagmaLeft, MagmaUpper, Dmat, Dmat, alpha, mat_d, Dmat, EigenVectors_d, Dmat, beta, temp_d, Dmat, queue);
+    //magma_zgemm(MagmaConjTrans, MagmaNoTrans, Dmat, Dmat, Dmat, alpha, EigenVectors_d, Dmat, temp_d, Dmat, beta, mat_d, Dmat, queue);
+    /*
+    magma_zprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
+    magma_dprint(1, Dmat, w, 1);
+    */
+
     end = clock();
     clock_gettime(CLOCK_REALTIME, &end_time);
 
@@ -117,15 +127,6 @@ int main(int argc, char **argv) {
     nsec = end_time.tv_nsec - start_time.tv_nsec;
     d_sec = (double)sec +(double)nsec / (1000 * 1000 * 1000);
     fprintf(stderr, "%d %f %f\n", Dmat, (double)(end-start)/CLOCKS_PER_SEC, d_sec);
-
-    /*
-    magmaDoubleComplex alpha = MAGMA_Z_MAKE(1,0);
-    magmaDoubleComplex beta  = MAGMA_Z_MAKE(0,0);
-    magma_zhemm(MagmaLeft, MagmaUpper, Dmat, Dmat, alpha, mat_d, Dmat, EigenVectors_d, Dmat, beta, temp_d, Dmat, queue);
-    magma_zgemm(MagmaConjTrans, MagmaNoTrans, Dmat, Dmat, Dmat, alpha, EigenVectors_d, Dmat, temp_d, Dmat, beta, mat_d, Dmat, queue);
-    magma_zprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
-    magma_dprint(1, Dmat, w, 1);
-    */
     
     magma_queue_destroy(queue);
     magma_free(mat_d);

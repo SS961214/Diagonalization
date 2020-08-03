@@ -1,4 +1,4 @@
-#include "mersenne_twister.h"
+#include "../Headers/mersenne_twister.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,20 +13,19 @@
 #include "magma_v2.h"
 #include "magma_lapack.h"
 
-__global__ void SetRandomMatrix(int Dmat, magmaDoubleComplex* mat, curandStateMtgp32_t* MTGPStates_d, int nBlock) {
+__global__ void SetRandomMatrix(int Dmat, magmaFloatComplex* mat, curandStateMtgp32_t* MTGPStates_d, int nBlock) {
   int i = blockIdx.x*blockDim.x +threadIdx.x;
   int j = blockIdx.y*blockDim.y +threadIdx.y;
   //int blockId = blockIdx.x +nBlock*blockIdx.y;
-
   if( i<Dmat && j<Dmat ){
-    double rand1 = curand_normal_double(&MTGPStates_d[0]) /sqrt(2.0);
-    double rand2 = curand_normal_double(&MTGPStates_d[0]) /sqrt(2.0);
-    //printf("%+.4lf, %+.4lf\n", rand1, rand2);
+    float rand1 = curand_normal(&MTGPStates_d[0]) /sqrt(2.0);
+    float rand2 = curand_normal(&MTGPStates_d[0]) /sqrt(2.0);
+    //printf("(%d,%d) rand1=%+.4lf, rand2=%+.4lf\n", i,j, rand1, rand2);
 
-    if(i == j) mat[i +Dmat*j] = MAGMA_Z_MAKE(sqrt(2.0)*rand1,0);
+    if(i == j) mat[i +Dmat*j] = MAGMA_C_MAKE(sqrt(2.0)*rand1,0);
     else if(i < j) {
-      mat[i +Dmat*j] = MAGMA_Z_MAKE(rand1,rand2);
-      mat[j +Dmat*i] = MAGMA_Z_CONJ(mat[i +Dmat*j]);
+      mat[i +Dmat*j] = MAGMA_C_MAKE(rand1,rand2);
+      mat[j +Dmat*i] = MAGMA_C_CONJ(mat[i +Dmat*j]);
     }
   }
 }
@@ -53,7 +52,7 @@ int main(int argc, char **argv) {
     //curandCreateGenerator(&generator, CURAND_RNG_PSEUDO_MTGP32);
     //curandSetPseudoRandomGeneratorSeed(generator, seed);
 
-    void (*po)(int, magmaDoubleComplex*, curandStateMtgp32_t*, int);
+    void (*po)(int, magmaFloatComplex*, curandStateMtgp32_t*, int);
     po = SetRandomMatrix;
     struct cudaFuncAttributes attr;
     cudaFuncGetAttributes(&attr, po);
@@ -62,9 +61,9 @@ int main(int argc, char **argv) {
     
       
     magma_init();
-    magmaDoubleComplex *mat_d, *EigenVectors_d, *temp_d;
-    double *w, *rwork;
-    magmaDoubleComplex *wA, *work;
+    magmaFloatComplex *mat_d, *EigenVectors_d, *temp_d;
+    float *w, *rwork;
+    magmaFloatComplex *wA, *work;
     magma_int_t lwork;
     magma_int_t lrwork = 1+5*Dmat+2*Dmat*Dmat;
     magma_int_t *iwork;
@@ -84,29 +83,28 @@ int main(int argc, char **argv) {
     magma_int_t dev = 0;
     magma_queue_create( dev, &queue );
     
-    magma_zmalloc( &mat_d, Dmat*Dmat );
-    magma_zmalloc( &EigenVectors_d, Dmat*Dmat );
-    magma_zmalloc( &temp_d, Dmat*Dmat );
+    magma_cmalloc( &mat_d, Dmat*Dmat );
+    magma_cmalloc( &EigenVectors_d, Dmat*Dmat );
+    magma_cmalloc( &temp_d, Dmat*Dmat );
 
-    magma_dmalloc_cpu( &w, Dmat );
-    magma_zmalloc_cpu( &wA, Dmat*Dmat );
-    magma_zmalloc_cpu( &work, lwork );
-    magma_dmalloc_cpu( &rwork, lrwork );
+    magma_smalloc_cpu( &w, Dmat );
+    magma_cmalloc_cpu( &wA, Dmat*Dmat );
+    magma_cmalloc_cpu( &work, lwork );
+    magma_smalloc_cpu( &rwork, lrwork );
     magma_imalloc_cpu( &iwork, liwork );
     
     cudaMalloc( (void**)&MTGPStates_d, nBlock*nBlock *sizeof(curandStateMtgp32) );
     cudaMalloc( (void**)&KernelParams_d, sizeof(mtgp32_kernel_params) );
-    cudaMemset( MTGPStates_d, 0, nBlock*nBlock *sizeof(curandStateMtgp32) );
 
     curandMakeMTGP32Constants(mtgp32dc_params_fast_11213, KernelParams_d);
     curandMakeMTGP32KernelState(MTGPStates_d, mtgp32dc_params_fast_11213, KernelParams_d, 1, seed);
     SetRandomMatrix<<<dimGrid,dimBlock>>>(Dmat, mat_d, MTGPStates_d, nBlock);
-    //magma_zprint_gpu(Dmat, Dmat, mat_d, Dmat, queue); 
-    magma_zcopymatrix(Dmat, Dmat, mat_d, Dmat, EigenVectors_d, Dmat, queue);
+    magma_cprint_gpu(Dmat, Dmat, mat_d, Dmat, queue); 
+    magma_ccopymatrix(Dmat, Dmat, mat_d, Dmat, EigenVectors_d, Dmat, queue);
 
     start = clock();
     clock_gettime(CLOCK_REALTIME, &start_time);
-    magma_zheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, w, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
+    magma_cheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, w, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
     end = clock();
     clock_gettime(CLOCK_REALTIME, &end_time);
 
@@ -119,12 +117,12 @@ int main(int argc, char **argv) {
     fprintf(stderr, "%d %f %f\n", Dmat, (double)(end-start)/CLOCKS_PER_SEC, d_sec);
 
     /*
-    magmaDoubleComplex alpha = MAGMA_Z_MAKE(1,0);
-    magmaDoubleComplex beta  = MAGMA_Z_MAKE(0,0);
-    magma_zhemm(MagmaLeft, MagmaUpper, Dmat, Dmat, alpha, mat_d, Dmat, EigenVectors_d, Dmat, beta, temp_d, Dmat, queue);
-    magma_zgemm(MagmaConjTrans, MagmaNoTrans, Dmat, Dmat, Dmat, alpha, EigenVectors_d, Dmat, temp_d, Dmat, beta, mat_d, Dmat, queue);
-    magma_zprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
-    magma_dprint(1, Dmat, w, 1);
+    magmaFloatComplex alpha = MAGMA_C_MAKE(1,0);
+    magmaFloatComplex beta  = MAGMA_C_MAKE(0,0);
+    magma_chemm(MagmaLeft, MagmaUpper, Dmat, Dmat, alpha, mat_d, Dmat, EigenVectors_d, Dmat, beta, temp_d, Dmat, queue);
+    magma_cgemm(MagmaConjTrans, MagmaNoTrans, Dmat, Dmat, Dmat, alpha, EigenVectors_d, Dmat, temp_d, Dmat, beta, mat_d, Dmat, queue);
+    magma_cprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
+    magma_sprint(1, Dmat, w, 1);
     */
     
     magma_queue_destroy(queue);

@@ -1,4 +1,4 @@
-#include "mersenne_twister.h"
+#include "../Headers/mersenne_twister.h"
 
 #include <stdlib.h>
 #include <stdio.h>
