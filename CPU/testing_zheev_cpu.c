@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
 #include <sys/time.h>
 #include <sysexits.h>
 #define _USE_MATH_DEFINES
@@ -46,9 +45,6 @@ int main(int argc, char **argv) {
       fprintf(stderr, "Usage: 1.This 2.Dmat\n");
       exit(EX_USAGE);
     }
-    char hostname[128];
-    gethostname(hostname, sizeof(hostname));
-    fprintf(stderr, "#hostname: %s\n", hostname);
 
     const int seed = 0;
     init_genrand(seed);
