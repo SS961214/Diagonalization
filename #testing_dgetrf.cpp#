@@ -1,0 +1,46 @@
+//LU factorization MAGMA public domain
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <cuda.h>
+#include <cublas.h>
+#include <cuda_runtime_api.h>
+#include "magma.h"
+#include "magma_lapack.h"
+#include "testings.h"
+//Matlab/Octave format
+void printmat(int N, int M, double *A, int LDA) {
+  double mtmp;
+  printf("[ ");
+  for (int i = 0; i < N; i++) {
+    printf("[ ");
+    for (int j = 0; j < M; j++) {
+      mtmp = A[i + j * LDA];
+      printf("%5.2e", mtmp);
+      if (j < M - 1) printf(", ");
+    } if (i < N - 1) printf("]; ");
+else printf("] ");
+} printf("]");
+}
+int main()
+{
+int M=3, N=3, lda, min_mn, nb;
+magma_int_t *ipiv, info;
+double *A;
+min_mn = min(M,N);
+nb = magma_get_dgetrf_nb(min_mn);
+lda = N;
+TESTING_CUDA_INIT();
+TESTING_MALLOC(ipiv, magma_int_t, min_mn);
+TESTING_HOSTALLOC( A, double, M*N);
+A[0+0*lda]=1; A[0+1*lda]= 8; A[0+2*lda]= 3;
+A[1+0*lda]=2; A[1+1*lda]=10; A[1+2*lda]= 8;
+A[2+0*lda]=9; A[2+1*lda]=-5; A[2+2*lda]=-1;
+printf("A =");printmat(M,N,A,lda);printf("\n");
+magma_dgetrf( M, N, A, lda, ipiv, &info);
+printf("LU =");printmat(M,N,A,lda);printf("\n");
+TESTING_FREE( ipiv );
+TESTING_HOSTFREE( A );
+TESTING_CUDA_FINALIZE();
+}
