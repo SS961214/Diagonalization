@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
       fprintf(stderr, "Usage: 1.This 2.Dmat\n");
       exit(EX_USAGE);
     }
-    void (*funcPtr)(int, magmaFloatComplex*, curandStateMtgp32_t*, int);
+    void (*funcPtr)(int, magmaDoubleComplex*, curandStateMtgp32_t*, int);
     funcPtr = setRandomMatrix;
     struct cudaFuncAttributes attr;
     cudaFuncGetAttributes(&attr, funcPtr);
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     magma_zmalloc( &EigenVectors_d, Dmat*Dmat );
     magma_zmalloc( &temp_d, Dmat*Dmat );
 
-    magma_dmalloc_cpu( &w, Dmat );
+    magma_dmalloc_cpu( &EigenValues, Dmat );
     magma_zmalloc_cpu( &wA, Dmat*Dmat );
     magma_zmalloc_cpu( &work, lwork );
     magma_dmalloc_cpu( &rwork, lrwork );
@@ -103,14 +103,14 @@ int main(int argc, char **argv) {
     magma_zcopymatrix(Dmat, Dmat, mat_d, Dmat, EigenVectors_d, Dmat, queue);
 
     start = getETtime();
-      magma_zheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, w, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
+      magma_zheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, EigenValues, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
     end = getETtime();
     T_diag = end-start;
 
     start = getETtime();
       magma_zhemm(MagmaLeft, MagmaUpper, Dmat, Dmat, alpha, mat_d, Dmat, EigenVectors_d, Dmat, beta, temp_d, Dmat, queue);
       magma_zgemm(MagmaConjTrans, MagmaNoTrans, Dmat, Dmat, Dmat, alpha, EigenVectors_d, Dmat, temp_d, Dmat, beta, mat_d, Dmat, queue);
-    nd = getETtime();
+    end = getETtime();
     T_prod = end-start;
     // magma_zprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
     // magma_dprint(1, Dmat, w, 1);

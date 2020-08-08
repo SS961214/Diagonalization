@@ -10,7 +10,7 @@ HEADER_DIR = ../Headers
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
 ALL_H  = $(wildcard ${HEADER_DIR}/*.h)
 
-TARGET = testing_cheevd_GPU.out
+TARGET = testing_cheevd_GPU.out testing_zheevd_GPU.out
 EXECS = ${TARGET:.out=${OUT_EXT}}
 SOURCES = ${TARGET:.out=${SRC_EXT}}
 
