@@ -4,6 +4,9 @@
 #SBATCH --mem=10GB
 #SBATCH --time=0-01:00:00
 
+#PBS -N G_cheevd
+#PBS -l nodes=1, mem=10G,walltime=1:00:00
+
 # ---------- Inputs ---------- #
 DEVICE="GPU"
 ROUTINE="cheevd"

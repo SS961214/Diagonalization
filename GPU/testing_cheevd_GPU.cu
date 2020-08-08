@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     int nThread = attr.maxThreadsPerBlock;
     int nBlock = (int)Dmat/nThread;
     if( Dmat%nThread != 0 ) nBlock += 1;
-    fprintf(stderr, "# nBlock=%d, nThread=%d *%d=%d\n", nBlock, nThread, nThread, nThread*nThread);
+    fprintf(stdout, "# (Dmat=%d) nBlock=%d, nThread=%d *%d=%d\n", Dmat, nBlock, nThread, nThread, nThread*nThread);
 
     dim3 dimGrid(nBlock, nBlock, 1);
     dim3 dimBlock(nThread, nThread, 1);
@@ -105,6 +105,10 @@ int main(int argc, char **argv) {
     start = getETtime();
       magma_cheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, EigenValues, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
     end = getETtime();
+      if(info != 0) {
+        fprintf(stderr, "# Error: magma_cheevd_gpu failed.\n");
+        exit(EX_SOFTWARE);
+      }
     T_diag = end-start;
 
     start = getETtime();
