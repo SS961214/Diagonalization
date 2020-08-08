@@ -4,14 +4,15 @@ OUT_EXT = .out
 CFLAGS  = -O2 -DADD_ -arch=compute_75
 DEBAG_FLAG = -g
 CFLAGS += $(DEBAG_FLAG)
-LIBES = -lm -lmagma -llapack -lblas -L$(HOME)/magma/lib
+LIBES = -lm -lmagma -llapack -lblas
+LIBES += $(MAGMA_PATH)
 HEADER_DIR = ../Headers
 
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
 ALL_H  = $(wildcard ${HEADER_DIR}/*.h)
 
-TARGET = testing_cheevd_GPU.out testing_zheevd_GPU.out
-EXECS = ${TARGET:.out=${OUT_EXT}}
+TARGET  = testing_cheevd_GPU.out testing_zheevd_GPU.out
+EXECS   = ${TARGET:.out=${OUT_EXT}}
 SOURCES = ${TARGET:.out=${SRC_EXT}}
 
 .SUFFIXES: .cu

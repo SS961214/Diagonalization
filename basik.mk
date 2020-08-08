@@ -1,6 +1,5 @@
 FRC = force_rebuild # If you set FRC=force_rebuild, dependencies lists will be newly generated.]
-PREFIX ?= $(HOME)
-MAGMA_PATH ?= $(locate libmagma)
+PREFIX    ?= $(HOME)
 TARGETROOT = $(PREFIX:%/=%)/bin/Diagonalization
 
 SUBDIRS = ./Headers $(shell find ./*/* -name Makefile -or -name basic.mk | grep -v -e "Headers" | sed -e 's/\/Makefile//' -e 's/\/basic.mk//' | sort | uniq)
@@ -30,7 +29,7 @@ subdirs : $(SUBDIRS)
 $(SUBDIRS) :
 	@echo
 	-$(MAKE) -C $@ -f basic.mk Makefile "FRC=${FRC}"
-	 $(MAKE) -C $@ -f Makefile
+	 $(MAKE) -C $@ -f Makefile "MAGMA_PATH=${MAGMA_PATH}"
 
 clean :
 	@for execs in $(EXECS)  ;do $(RM) $$execs         ;echo "rm -f $$execs"         ;done
