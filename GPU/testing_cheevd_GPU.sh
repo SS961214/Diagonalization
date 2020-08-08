@@ -15,15 +15,18 @@ ROUTINE="cheevd"
 programDIR=$(cd $(dirname $0); pwd)
 rootDIR=${programDIR%%/bin/*}
 program=$rootDIR/bin/Diagonalization/${DEVICE}/testing_${ROUTINE}_${DEVICE}.out
-OUTPUT=${ROUTINE}_${DEVICE}_($(hostname)).txt
+OUTPUT=${ROUTINE}_${DEVICE}_\($(hostname)\)_time.txt
+INFO=${ROUTINE}_${DEVICE}_\($(hostname)\)_info.txt
 
 mkdir -p $rootDIR/data/Diagonalization
 cd $rootDIR/data/Diagonalization
 
 echo \#$(hostname)>$OUTPUT
+echo \#$(hostname)>$INFO
+
 echo \# 1.Dim of matrix 2.T_diagonalization 3.T_matrixProducts>>$OUTPUT
 set +x
-for n in $(seq 1 100);do $program $((500*$n)) 1>/dev/null; done 2>>$OUTPUT
+for n in $(seq 1 100);do $program $((500*$n)); done 1>>$INFO 2>>$OUTPUT
 set -x
 echo Program: $program
 echo Output file: $(pwd)/$OUTPUT

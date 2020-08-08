@@ -16,8 +16,8 @@ all : subdirs $(SHELLSCRIPTS)
 	@ $(RM) -r $(TARGETROOT)
 	@for out in $(DIRS:./%=%) ;do mkdir -p $(TARGETROOT)/$$out;done
 	@for out in $(EXECS:./%=%);do mv $$out $(TARGETROOT)/$$out;done
-	@for out in $(SHELLSCRIPTS:./%=%);do cp $$out $(TARGETROOT)/$$out;done
-	@for out in $(TOCOPY)     ;do cp -rf $$out $(TARGETROOT)/$$out;chmod u+x $(TARGETROOT)/$$out;done
+	@for out in $(SHELLSCRIPTS:./%=%);do cp $$out $(TARGETROOT)/$$out;chmod u+x $(TARGETROOT)/$$out;done
+	@for out in $(TOCOPY)     ;do cp -rf $$out $(TARGETROOT)/$$out;done
 	@for objs in $(OBJS);do $(RM) $$objs;done
 	@echo
 	@COLOR_f=$$(printf '\033[36m'); COLOR_b=$$(printf '\033[m'); echo "$${COLOR_f}(Make completed) Executable files are placed in \"$(TARGETROOT:%/=%)\".$${COLOR_b}"
