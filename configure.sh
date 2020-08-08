@@ -1,5 +1,5 @@
 #!/bin/sh
-COLOR_f=$(printf '\033[31m')
+COLOR_f=$(printf '\033[36m')
 COLOR_b=$(printf '\033[m')
 SUCCESS="${COLOR_f}Makefile was successfully created.${COLOR_b}"
 
