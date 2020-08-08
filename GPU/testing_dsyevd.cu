@@ -38,8 +38,8 @@ int main(int argc, char **argv) {
     magma_queue_t queue=NULL;
     magma_int_t dev = 0;
     magma_queue_create( dev, &queue );
-    
-    magma_dmalloc_pinned( &mat_h, Dmat*Dmat ); 
+
+    magma_dmalloc_pinned( &mat_h, Dmat*Dmat );
     magma_dmalloc( &mat_d, Dmat*Dmat );
     magma_dmalloc( &EigenVectors_d, Dmat*Dmat );
     magma_dmalloc( &temp_d, Dmat*Dmat );
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     magma_dmalloc_cpu( &wA, Dmat*Dmat );
     magma_dmalloc_cpu( &work, lwork );
     magma_imalloc_cpu( &iwork, liwork );
-    
+
     for(int i=0;i < Dmat; ++i) {
       mat_h[i+Dmat*i] = genrand_real3();
       for(int j=0;j < i; ++j) {
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 //    magma_dsymm(MagmaLeft, MagmaUpper, Dmat, Dmat, 1, mat_d, Dmat, EigenVectors_d, Dmat, 0, temp_d, Dmat, queue);
 //    magma_dgemm(MagmaTrans, MagmaNoTrans, Dmat, Dmat, Dmat, 1, EigenVectors_d, Dmat, temp_d, Dmat, 0, mat_d, Dmat, queue);
 //    magma_dprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
-    
+
     magma_queue_destroy(queue);
     //magma_free_cpu(mat_h);
     //magma_free(mat_d);

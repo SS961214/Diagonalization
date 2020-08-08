@@ -1,22 +1,19 @@
 #include "../Headers/mersenne_twister.h"
-#define _USE_MATH_DEFINES
-#define __USE_MISC
-#include <math.h>
-#include <complex.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include <sys/time.h>
 #include <sysexits.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <complex.h>
 
 #ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795029L
+  #define M_PI 3.1415926535897932384626433832795029L
 #endif
 
-
-double getETtime() {
+static inline double getETtime() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec +(double)tv.tv_usec *1e-6;

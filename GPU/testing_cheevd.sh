@@ -10,8 +10,8 @@ rootDIR=${programDIR%%/bin/*}
 mkdir -p $rootDIR/data/Diagonalization
 cd $rootDIR/data/Diagonalization
 
-OUTPUT=zheev_cpu_$(hostname).txt
-echo \#$(hostname) >$OUTPUT
+OUTPUT=cheevd_gpu_$(hostname).txt
+echo \#$(hostname)>$OUTPUT
 set +x
-for n in $(seq 1 100);do $rootDIR/bin/Diagonalization/CPU/testing_zheevd_cpu.out $((500*$n)) 1>/dev/null;done 2>>$OUTPUT
+for n in $(seq 1 100);do $rootDIR/bin/Diagonalization/CPU/testing_zheev_cpu.out $((500*$n)) 1>/dev/null; done 2>>$OUTPUT
 set -x

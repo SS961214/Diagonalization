@@ -2,6 +2,7 @@ SRC_EXT = .c
 OUT_EXT = .out
 CFLAGS  = -std=c11 -Wall -O2
 DEBAG_FLAG = -g
+CFLAGS += $(DEBAG_FLAG)
 LIBES = -lm -llapack -lblas
 HEADER_DIR = ../Headers
 
