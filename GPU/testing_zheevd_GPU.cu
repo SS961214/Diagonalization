@@ -44,14 +44,14 @@ int main(int argc, char **argv) {
     funcPtr = setRandomMatrix;
     struct cudaFuncAttributes attr;
     cudaFuncGetAttributes(&attr, funcPtr);
-    printf("#constSizeBytes     = %zu\n", attr.constSizeBytes);
-    printf("#maxThreadsPerBlock = %d\n", attr.maxThreadsPerBlock);
+    fprintf(stdout, "# constSizeBytes     = %zu\n", attr.constSizeBytes);
+    fprintf(stdout, "# maxThreadsPerBlock = %d\n", attr.maxThreadsPerBlock);
 
     const int Dmat = atoi(argv[1]);
     int nThread = attr.maxThreadsPerBlock;
     int nBlock = (int)Dmat/nThread;
     if( Dmat%nThread != 0 ) nBlock += 1;
-    printf("nBlock=%d, nThread=%d *%d=%d\n", nBlock, nThread, nThread, nThread*nThread);
+    fprintf(stderr, "# nBlock=%d, nThread=%d *%d=%d\n", nBlock, nThread, nThread, nThread*nThread);
 
     dim3 dimGrid(nBlock, nBlock, 1);
     dim3 dimBlock(nThread, nThread, 1);
