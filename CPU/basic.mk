@@ -9,7 +9,7 @@ HEADER_DIR = ../Headers
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
 ALL_H  = $(wildcard ${HEADER_DIR}/*.h)
 
-TARGET = testing_zheev_cpu.out testing_zheevd_cpu.out
+TARGET = testing_zheev_CPU.out testing_zheevd_CPU.out
 EXECS = ${TARGET:.out=${OUT_EXT}}
 SOURCES = ${TARGET:.out=.c}
 

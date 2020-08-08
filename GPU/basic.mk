@@ -10,7 +10,7 @@ HEADER_DIR = ../Headers
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
 ALL_H  = $(wildcard ${HEADER_DIR}/*.h)
 
-TARGET = testing_cheevd.out
+TARGET = testing_cheevd_GPU.out
 EXECS = ${TARGET:.out=${OUT_EXT}}
 SOURCES = ${TARGET:.out=${SRC_EXT}}
 
@@ -22,12 +22,9 @@ all : ${FRC}
 Makefile : ${FRC}
 	cp basic.mk $@
 	@echo '# Automatically-generated dependencies list:' >> $@
-	${CC} ${CFLAGS} -MM ${SOURCES} >> $@
+	@${CC} ${CFLAGS} -MM ${SOURCES} >> $@
 
 .cu.out:
 	${CC} ${CFLAGS} -o $@ $< ${ALL_O} ${LIBES}
-
-.cu.o:
-	${CC} ${CFLAGS} -o $@ $< ${LIBES}
 
 force_rebuild :

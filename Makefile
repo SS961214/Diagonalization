@@ -5,7 +5,7 @@ TARGETROOT = $(PREFIX:%/=%)/bin/Diagonalization
 SUBDIRS = ./Headers $(shell find ./*/* -name Makefile -or -name basic.mk | grep -v -e "Headers" | sed -e 's/\/Makefile//' -e 's/\/basic.mk//' | sort | uniq)
 EXECS   = $(shell find ./*/* -name "*.out")
 OBJS    = $(shell find ./*/* -name "*.o")
-TOCOPY  = 
+TOCOPY  =
 SHELLSCRIPTS = $(shell find ./* -name "*.sh")
 SHELLSCRIPTS += $(shell find ./* -name "CreateScript*.c")
 DIRS = $(dir $(EXECS)) $(dir $(SHELLSCRIPTS))
@@ -34,7 +34,7 @@ $(SUBDIRS) :
 clean :
 	@for execs in $(EXECS)  ;do $(RM) $$execs         ;echo "rm -f $$execs"         ;done
 	@for objs  in $(OBJS)   ;do $(RM) $$objs          ;echo "rm -f $$objs"          ;done
-	@for makes in $(SUBDIRS);do $(RM) $$makes/Makefile;echo "rm -f $$makes/Makefile";done
+	@for makes in $(SUBDIRS);do if [ -e $$makes/basic.mk ]; then $(RM) $$makes/Makefile;echo "rm -f $$makes/Makefile";fi ;done
 
 test :
 	for dir in $(SUBDIRS);do echo $$dir;done
