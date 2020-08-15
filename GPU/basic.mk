@@ -4,8 +4,7 @@ OUT_EXT = .out
 CFLAGS  = -O2 -DADD_ -arch=compute_75
 DEBAG_FLAG = -g
 CFLAGS += $(DEBAG_FLAG)
-LIBES = -lm -lmagma -llapack -lblas
-LIBES += $(MAGMA_PATH)
+LIBES = $(shell pkg-config --cflags --libs magma)
 HEADER_DIR = ../Headers
 
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
