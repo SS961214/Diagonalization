@@ -19,7 +19,7 @@ static inline double getETtime() {
   return tv.tv_sec +(double)tv.tv_usec *1e-6;
 }
 
-__global__ void setRandomMatrix(int Dmat, magmaDoubleComplex* mat, curandStateMtgp32_t* MTGPStates_d, int nBlock) {
+__global__ void setRandomMatrix(int Dmat, magmaDoubleComplex* mat_d, curandStateMtgp32_t* MTGPStates_d, int nBlock) {
   int index1 = blockIdx.x*blockDim.x +threadIdx.x;
   int index2 = blockIdx.y*blockDim.y +threadIdx.y;
   //int blockId = blockIdx.x +nBlock*blockIdx.y;
@@ -27,10 +27,10 @@ __global__ void setRandomMatrix(int Dmat, magmaDoubleComplex* mat, curandStateMt
     double rand1 = curand_normal_double(&MTGPStates_d[0]) /sqrt(2.0);
     double rand2 = curand_normal_double(&MTGPStates_d[0]) /sqrt(2.0);
     //printf("%+.4lf, %+.4lf\n", rand1, rand2);
-    if(index1 == index2) mat[index1 +Dmat*index2] = MAGMA_Z_MAKE(sqrt(2.0)*rand1,0);
+    if(index1 == index2) mat_d[index1 +Dmat*index2] = MAGMA_Z_MAKE(sqrt(2.0)*rand1,0);
     else if(index1 < index2) {
-      mat[index1 +Dmat*index1] = MAGMA_Z_MAKE(rand1,rand2);
-      mat[index2 +Dmat*index1] = MAGMA_Z_CONJ(mat[index1 +Dmat*index2]);
+      mat_d[index1 +Dmat*index1] = MAGMA_Z_MAKE(rand1,rand2);
+      mat_d[index2 +Dmat*index1] = MAGMA_Z_CONJ(mat[index1 +Dmat*index2]);
     }
   }
 }
