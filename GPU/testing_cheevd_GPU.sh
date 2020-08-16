@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH --get-user-env
 #SBATCH -p prawnew
-#SBATCH --mem=10GB
+#SBATCH --mem=20GB
 #SBATCH --time=0-01:00:00
 
 #PBS -N G_cheevd
-#PBS -l nodes=1, mem=10G,walltime=1:00:00
+#PBS -l nodes=1, mem=20G,walltime=1:00:00
 
 # ---------- Inputs ---------- #
 DEVICE="GPU"
@@ -13,10 +13,11 @@ ROUTINE="cheevd"
 # ---------- (END)Inputs ---------- #
 
 programDIR=$(cd $(dirname $0); pwd)
-rootDIR=${programDIR%%/bin/*}
+rootDIR=$HOME
+HOST=$(hostname)
 program=$rootDIR/bin/Diagonalization/${DEVICE}/testing_${ROUTINE}_${DEVICE}.out
-OUTPUT=${ROUTINE}_${DEVICE}_\($(hostname)\)_time.txt
-INFO=${ROUTINE}_${DEVICE}_\($(hostname)\)_info.txt
+OUTPUT="${ROUTINE}_${DEVICE}_(${HOST})_time.txt"
+INFO="${ROUTINE}_${DEVICE}_(${HOST})_info.txt"
 
 mkdir -p $rootDIR/data/Diagonalization
 cd $rootDIR/data/Diagonalization
