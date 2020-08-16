@@ -29,7 +29,7 @@ __global__ void setRandomMatrix(int Dmat, magmaDoubleComplex* mat_d, curandState
     //printf("%+.4lf, %+.4lf\n", rand1, rand2);
     if(index1 == index2) mat_d[index1 +Dmat*index2] = MAGMA_Z_MAKE(sqrt(2.0)*rand1,0);
     else if(index1 < index2) {
-      mat_d[index1 +Dmat*index1] = MAGMA_Z_MAKE(rand1,rand2);
+      mat_d[index1 +Dmat*index2] = MAGMA_Z_MAKE(rand1,rand2);
       mat_d[index2 +Dmat*index1] = MAGMA_Z_CONJ(mat_d[index1 +Dmat*index2]);
     }
   }
