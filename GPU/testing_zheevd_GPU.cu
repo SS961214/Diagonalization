@@ -106,7 +106,9 @@ int main(int argc, char **argv) {
       magma_zheevd_gpu(MagmaVec, MagmaUpper, Dmat, EigenVectors_d, Dmat, EigenValues, wA, Dmat, work, lwork, rwork, lrwork, iwork, liwork, &info);
     end = getETtime();
       if(info != 0) {
-        fprintf(stderr, "# Error: magma_zheevd_gpu failed.\n");
+        fprintf(stderr, "# Error: magma_zheevd_gpu failed. (info=%d)\n", info);
+        magma_xerbla("magma_zheevd_gpu", info);
+        magma_strerror(info);
         exit(EX_SOFTWARE);
       }
     T_diag = end-start;
