@@ -1,10 +1,8 @@
 CC = nvcc
 SRC_EXT = .cu
 OUT_EXT = .out
-CFLAGS  = -O2 -DADD_ -arch=compute_75
-DEBAG_FLAG = -g
-CFLAGS += $(DEBAG_FLAG)
-LIBES = $(shell pkg-config --cflags --libs magma)
+CFLAGS  = -O2
+LIBES   = $(shell pkg-config --cflags --libs magma | sed -e 's/-fopenmp/-Xcompiler "-fopenmp"/g')
 HEADER_DIR = ../Headers
 
 ALL_O  = $(wildcard ${HEADER_DIR}/*.o)
@@ -22,9 +20,9 @@ all : ${FRC}
 Makefile : ${FRC}
 	cp basic.mk $@
 	@echo '# Automatically-generated dependencies list:' >> $@
-	@${CC} ${CFLAGS} -MM ${SOURCES} >> $@
+	@${CC} -MM ${SOURCES} ${CFLAGS} ${LIBES}>> $@
 
 .cu.out:
-	${CC} ${CFLAGS} -o $@ $< ${ALL_O} ${LIBES}
+	${CC} -o $@ $< ${CFLAGS} ${ALL_O} ${LIBES}
 
 force_rebuild :

@@ -1,3 +1,4 @@
+MAGMA_PATH=-L/home/sugimoto/magma-2.5.3/lib
 FRC = force_rebuild # If you set FRC=force_rebuild, dependencies lists will be newly generated.]
 PREFIX    ?= $(HOME)
 TARGETROOT = $(PREFIX:%/=%)/bin/Diagonalization
