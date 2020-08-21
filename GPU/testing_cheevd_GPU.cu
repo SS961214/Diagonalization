@@ -24,7 +24,7 @@ __global__ void setRandomMatrix(int Dmat, int Dmat32, magmaFloatComplex* mat, cu
   int index1 = blockIdx.x*blockDim.x +threadIdx.x;
   int index2 = blockIdx.y*blockDim.y +threadIdx.y;
   if( (index1>=Dmat32) || (index2>=Dmat32) ) return;
-  if( (index1>=Dmat) || (index2>=Dmat) )　mat[index1 +Dmat32*index2] = MAGMA_C_ZERO;
+  if( (index1>=Dmat) || (index2>=Dmat) ) mat[index1 +Dmat32*index2] = MAGMA_C_ZERO;
   else if( index2<=index1 && index1<Dmat ){
     float rand1 = curand_normal(&MTGPStates_d[0]) /sqrt(2.0);
     float rand2 = curand_normal(&MTGPStates_d[0]) /sqrt(2.0);
@@ -41,10 +41,15 @@ int main(int argc, char **argv) {
       fprintf(stderr, "Usage: 1.This 2.Dmat\n");
       exit(EX_USAGE);
     }
-    void (*funcPtr)(int, magmaFloatComplex*, curandStateMtgp32_t*, int);
+    void (*funcPtr)(int, int, magmaFloatComplex*, curandStateMtgp32_t*, int);
     funcPtr = setRandomMatrix;
     struct cudaFuncAttributes attr;
-    cudaFuncGetAttributes(&attr, funcPtr);
+    cudaError_t err;
+    err = cudaFuncGetAttributes(&attr, funcPtr);
+    if (err != cudaSuccess) {
+      fprintf(stderr, "Error: cudaFuncGetAttributes failed with an exit code = %d.\n       %s", err, cudaGetErrorString(err));
+      exit(err);
+    }
     fprintf(stdout, "# constSizeBytes     = %zu\n", attr.constSizeBytes);
     fprintf(stdout, "# maxThreadsPerBlock = %d\n", attr.maxThreadsPerBlock);
 
