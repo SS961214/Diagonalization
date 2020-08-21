@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
     fprintf(stdout, "# maxThreadsPerBlock = %d\n", attr.maxThreadsPerBlock);
 
     const int Dmat = atoi(argv[1]);
-    int nThread = attr.maxThreadsPerBlock;
+    int nThread = (int)sqrt(attr.maxThreadsPerBlock);
     int nBlock = (int)Dmat/nThread;
     if( Dmat%nThread != 0 ) nBlock += 1;
     fprintf(stdout, "# (Dmat=%d) nBlock=%d, nThread=%d *%d=%d\n", Dmat, nBlock, nThread, nThread, nThread*nThread);
