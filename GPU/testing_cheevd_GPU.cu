@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 
     start = getETtime();
       magma_chemm(MagmaLeft, MagmaUpper, Dmat32, Dmat32, alpha, mat_d, Dmat32, EigenVectors_d, Dmat32, beta, temp_d, Dmat32, queue);
-      magma_cgemm(MagmaConjTrans, MagmaNoTrans, Dmat32, Dmat32, Dmat32, alpha, EigenVectors_d, Dmat, temp_d, Dmat32, beta, mat_d, Dmat32, queue);
+      magma_cgemm(MagmaConjTrans, MagmaNoTrans, Dmat32, Dmat32, Dmat32, alpha, EigenVectors_d, Dmat32, temp_d, Dmat32, beta, mat_d, Dmat32, queue);
     end = getETtime();
     T_prod = end-start;
     // magma_cprint_gpu(Dmat, Dmat, mat_d, Dmat, queue);
